@@ -1,0 +1,399 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('app') }}
+{% endblock %}
+
+{% block title %}VK Users{% endblock %}
+
+{% block body %}
+{% set cmd_dropdown = '                    
+        <option value="off">Off</option>
+        <option value="contains">Contains</option>
+        <option value="eq">Eq</option>
+        <option value="neq">NEq</option>
+        <option value="gt">Gt</option>
+        <option value="gte">Gte</option>
+        <option value="lt">Lt</option>
+        <option value="lte">Lte</option>
+        <option value="isNull">IsNull</option>
+        <option value="isNotNull">IsNotNull</option>
+        <option value="nte">Nte</option>
+        ' %}
+<div class="container-fluid">
+    <p>
+          <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
+            Filter expand
+          </button>
+        </p>
+    </p>
+    <div class="collapse" id="collapseFilter">
+        <div class="card card-body">
+            <form method="get">
+                <div class="form-group mx-sm-3  mb-2">
+                    <div class="row">
+                        <div class="col-md-1">
+                            <label for="user_id" class="form-label" class="form-check-input">User ID:</label>
+                        </div>
+                        <div class="col-md-1">
+                            <select name="userIdCmd" id="user_id_cmd">
+                                {{cmd_dropdown | raw}}
+                            </select>
+                        </div>    
+                        <div class="col-md-8">
+                            <input type="text" id="user_id" name="userId"  class="form-control">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group mx-sm-3  mb-2">
+                    <div class="row">
+                        <div class="col-md-1">
+                            <label for="first_name"  class="form-label">First name:</label>
+                        </div>
+                        <div class="col-md-1">
+                            <select name="firstNameCmd" id="first_name_cmd">
+                                {{cmd_dropdown | raw}}
+                            </select>                        
+                        </div>
+                        <div class="col-md-8">
+                            <input type="text" id="first_name" name="firstName"  class="form-control">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group mx-sm-3  mb-2">
+                    <div class="row">
+                        <div class="col-md-1">
+                            <label for="last_name"  class="form-label">Last name:</label>
+                        </div>
+                        <div class="col-md-1">
+                            <select name="lastNameCmd" id="last_name_cmd">
+                                {{cmd_dropdown | raw}}
+                            </select>                        
+                        </div>
+                        <div class="col-md-8">
+                            <input type="text" id="last_name" name="lastName" class="form-control">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group mx-sm-3  mb-2">
+                    <div class="row">
+                        <div class="col-md-1">
+                            <label for="nickname" class="form-label">Nickname:</label>
+                        </div>
+                        <div class="col-md-1">
+                            <select name="nicknameCmd" id="nickname_cmd">
+                                {{cmd_dropdown | raw}}
+                            </select>                        
+                        </div>
+                        <div class="col-md-8">
+                            <input type="text" id="nickname" name="nickname" class="form-control">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group mx-sm-3  mb-2">
+                    <div class="row">
+                        <div class="col-md-1">
+                            <label for="maiden_name" class="form-label">MaidenName:</label>
+                        </div>
+                        <div class="col-md-1">
+                            <select name="maidenNameCmd" id="maiden_name_cmd">
+                                {{cmd_dropdown | raw}}
+                            </select>                        
+                        </div>
+                        <div class="col-md-8">
+                            <input type="text" id="maiden_name" name="maidenName" class="form-control">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group mx-sm-3  mb-2">
+                    <div class="row">
+                        <div class="col-md-1">
+                            <label for="city" class="form-label">City:</label>
+                        </div>
+                        <div class="col-md-1">
+                            <select name="cityCmd" id="city_cmd">
+                                {{cmd_dropdown | raw}}
+                            </select>                        
+                        </div>
+                        <div class="col-md-8">
+                            <input type="text" id="city" name="city" class="form-control">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group mx-sm-3  mb-2">
+                    <div class="row">
+                        <div class="col-md-1">
+                            <label for="country" class="form-label">Country:</label>
+                        </div>
+                        <div class="col-md-1">
+                            <select name="countryCmd" id="country_cmd">
+                                {{cmd_dropdown | raw}}
+                            </select>                        
+                        </div>
+                        <div class="col-md-8">
+                            <input type="text" id="country" name="country" class="form-control">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group mx-sm-3  mb-2">
+                    <div class="row">
+                        <div class="col-md-1">
+                            <label for="mobile_phone" class="form-label">MobilePhone:</label>
+                        </div>
+                        <div class="col-md-1">
+                            <select name="mobilePhoneCmd" id="mobile_phone_cmd">
+                                {{cmd_dropdown | raw}}
+                            </select>                        
+                        </div>
+                        <div class="col-md-8">
+                            <input type="text" id="mobile_phone" name="mobilePhone" class="form-control">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group mx-sm-3  mb-2">
+                    <div class="row">
+                        <div class="col-md-1">
+                            <label for="last_seen_from" class="form-label">LastSeen From:</label>
+                        </div>
+                        <div class="col-md-1">
+                            <select name="lastSeenFromCmd" id="last_seen_from_cmd">
+                                {{cmd_dropdown | raw}}
+                            </select>                        
+                        </div>
+                        <div class="col-md-8">
+                            <input type="date" id="last_seen_from" name="lastSeenFrom" class="form-control">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group mx-sm-3  mb-2">
+                    <div class="row">
+                        <div class="col-md-1">
+                            <label for="last_seen_to" class="form-label">LastSeen To:</label>
+                        </div>
+                        <div class="col-md-1">
+                            <select name="lastSeenToCmd" id="last_seen_to_cmd">
+                                {{cmd_dropdown | raw}}
+                            </select>                        
+                        </div>
+                        <div class="col-md-8">
+                            <input type="date" id="last_seen_to" name="lastSeenTo" class="form-control">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group mx-sm-3  mb-2">
+                    <div class="row">
+                        <div class="col-md-1">
+                            <label for="screen_name" class="form-label">ScreenName:</label>
+                        </div>
+                        <div class="col-md-1">
+                            <select name="screenNameCmd" id="screen_name_cmd">
+                                {{cmd_dropdown | raw}}
+                            </select>                        
+                        </div>
+                        <div class="col-md-8">
+                            <input type="text" id="screen_name" name="screenName" class="form-control">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group mx-sm-3  mb-2">
+                    <div class="row">
+                        <div class="col-md-1">
+                            <label for="online" class="form-label">Online:</label>
+                        </div>
+                        <div class="col-md-1">
+                            <select name="onlineCmd" id="online_cmd">
+                                {{cmd_dropdown | raw}}
+                            </select>                        
+                        </div>
+                        <div class="col-md-8">
+                            <input type="text" id="online" name="online" class="form-control">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group mx-sm-3  mb-2">
+                    <div class="row">
+                        <div class="col-md-1">
+                            <label for="skype" class="form-label">Skype:</label>
+                        </div>
+                        <div class="col-md-1">
+                            <select name="skypeCmd" id="skype_cmd">
+                                {{cmd_dropdown | raw}}
+                            </select>                        
+                        </div>
+                        <div class="col-md-8">
+                            <input type="text" id="skype" name="skype" class="form-control">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group mx-sm-3  mb-2">
+                    <div class="row">
+                        <div class="col-md-1">
+                            <label for="twitter" class="form-label">Twitter:</label>
+                        </div>
+                        <div class="col-md-1">
+                            <select name="twitterCmd" id="twitter_cmd">
+                                {{cmd_dropdown | raw}}
+                            </select>                        
+                        </div>
+                        <div class="col-md-8">
+                            <input type="text" id="twitter" name="twitter" class="form-control">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group mx-sm-3  mb-2">
+                    <div class="row">
+                        <div class="col-md-1">
+                            <label for="military" class="form-label">Military:</label>
+                        </div>
+                        <div class="col-md-1">
+                            <select name="militaryCmd" id="military_cmd">
+                                {{cmd_dropdown | raw}}
+                            </select>                        
+                        </div>
+                        <div class="col-md-8">
+                            <input type="text" id="military" name="military" class="form-control">    
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group mx-sm-3  mb-2">
+                    <button type="submit" value="Submit" class="btn btn-primary mb-2">Filter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div>
+        <div>
+            <ul class="pagination">
+                       
+                {% if currentPage != 1 %}
+
+                <li class="page-item">
+                    {% set params = params|merge({'page': 1}) %}
+                    <a class="page-link" href="{{ path('app_vk_users', params) }}">First</a>
+                </li>
+                {% endif %}
+                {% for i in 1..nbPages %}
+                    {% set params = params|merge({'page': loop.index}) %}
+                    {% if 0 == (currentPage - nearbyPagesLimit) - loop.index %} {# dot before #}
+                        <li class="page-item disabled"><a href="#">...</a></li>
+                    {% elseif 0 == (currentPage + nearbyPagesLimit) - loop.index %} {# dot after #}
+                        <li class="page-item disabled"><a href="#">...</a></li>
+                    {% elseif 0 < (currentPage - nearbyPagesLimit) - loop.index %} {# hide all before #}
+                    {% elseif 0 > (currentPage + nearbyPagesLimit) - loop.index %} {# hide all after #}
+                    {% else %}
+                        <li {% if currentPage == loop.index  %} class="active page-item"{% endif %}>
+                            <a class="page-link" href="{{ path('app_vk_users',  params) }}">{{ loop.index }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                {% if currentPage != nbPages %}
+                <li>
+                    <a class="page-link" href="{{ path('app_vk_users', params) }}">Last</a>
+                </li>
+                {% endif %}
+            </ul>
+            <div>
+                <h3 class="text-primary"> Records count {{records_count}}, records between {{countInPage * (currentPage-1) + 1}} - 
+                    {% if countInPage * currentPage < records_count%}
+                        {{countInPage * currentPage}} 
+                    {% else %}
+                        {{records_count}}
+                    {% endif%} 
+                    , pages count {{nbPages}}
+                    </h3>
+            </div>
+            
+            <div class="form-group mx-sm-3  mb-2">
+                <div class="row">
+                    <div class="col-md-3">
+                        <input type="text" name="page" id="page-go-to">
+                    </div>
+                    <div class="col-md-2">
+                        <a class="page-link" onclick="changePageInUrl()" href="#">Go To</a>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                var pageGoTo = document.getElementById("page-go-to");
+                var changePageInUrl = function(){
+                    url = new URL(window.location.href);
+                    url.searchParams.set('page', pageGoTo.value);
+                    console.log(url)
+                    window.location.replace(url);
+
+                }    
+            </script>
+        </div>
+    </div>
+    <div>
+        <table class="table table-bordered table-hover table-sm">
+            <tr>
+                <th scope="col">Id</th>
+                <th>UserId</th>
+                <th>Nick Name</th>
+                <th>Last Name</th>
+                <th>First Name</th>
+                <th>Maiden Name</th>
+                <th>City</th>
+                <th>Country</th>
+                <th>Photo</th>
+                <th>Mobile Phone</th>
+                <th>Last Seen</th>
+                <th>Screen Name</th>
+                <th>Online</th>
+                <th>Skype</th>
+                <th>Twitter</th>
+                <th>Military</th>
+                <th>Users Data</th>
+                <th>DateTime</th>
+            </tr>
+            {% for article in articles %}
+                <tr>
+                    <td>{{article.id}}</td>
+                    <td>{{article.UserId}}</td>
+                    <td>{{article.Nickname}}</td>
+                    <td>{{article.LastName}}</td>
+                    <td>{{article.FirstName}}</td>
+                    <td>{{article.MaidenName}}</td>
+                    <td>{{article.CitYName}}</td>
+                    <td>{{article.Country}}</td>
+                    <td>
+                        <a href="/vk/users/view?id={{article.id}}">
+                            <img class="img-fluid img-thumbnai" src="{{asset("photos/#{article.UserId}.jpg") }}"></img></td>
+                        </a>
+                    <td>{{article.MobilePhone}}{{article.HomePhone}}</td>
+                    <td>{{article.LastSeen|date('Y-m-d')}}</td>
+                    <td>{{article.ScreenName}}</td>
+                    <td>{{article.Online}}</td>
+                    <td>{{article.Skype}}</td>
+                    <td>{{article.Twitter}}</td>
+                    <td>{{article.Military}}</td>
+                    <td><a href="/vk/users/view?id={{article.id}}">View</a></td>
+                    <td>{{article.DateTime|date('Y-m-d H:i:s')}}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('app') }}
+{% endblock %}
+

@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('app') }}
+{% endblock %}
+
+{% block title %}VK Cities{% endblock %}
+
+    {% block body %}
+        <div>
+        
+        <div>
+            <table class="table table-bordered table-hover table-sm">
+                <tr>
+                    <th scope="col">{{dump(articles)}}</th>
+                </tr>
+            </table>
+        </div>
+    </div>
+    {% endblock %}
+
