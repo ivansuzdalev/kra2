@@ -116,7 +116,7 @@ class VkUsersService
                     }
                     $modelVkUsers->setMilitary($military);
                     $modelVkUsers->setTwitter($parsed['twitter'] ?? '');
-                    $modelVkUsers->setRecordData((array)json_encode($parsed));
+                    $modelVkUsers->setRecordData($parsed);
                     $modelVkUsers->setDatetime(new DateTime('now'));
 
                     if (!$existVkUsers) {
@@ -194,7 +194,6 @@ class VkUsersService
 
             if ($statusCode == 200 && count($parsedData) > 0) {
                 $returnArr[] = $parsedData;
-                //print_r($parsedData);
             }
             usleep(500 * 1000);
         }

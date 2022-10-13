@@ -246,9 +246,9 @@ class VkUsers
         return $this;
     }
 
-    public function setCity(?int $cityName): self
+    public function setCity(?int $city): self
     {
-        $this->cityName = $cityName;
+        $this->city = $city;
 
         return $this;
     }
