@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\VkTokens;
+use App\Service\VkUsersService;
 use DateTime;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -123,23 +124,10 @@ class VkUsersController extends AbstractController
     /**
      * @Route("/vk/users/view", name="app_vk_users_view")
      */
-    public function view(EntityManagerInterface $em, Request $request): Response
+    public function view(EntityManagerInterface $em, Request $request, VkUsersService $vkUsersService): Response
     {
-
         $id = $request->query->get('id');
-        $userDataArr = $em
-            ->createQueryBuilder()
-            ->select('vk_users.userId as UserId, vk_users.firstName as FirstName, vk_users.lastName, city.title as cityName, vk_users.nickname, vk_users.maidenName, vk_users.city, vk_users.country, vk_users.mobilePhone, vk_users.lastSeen, vk_users.screenName, vk_users.online, vk_users.skype, vk_users.military, vk_users.recordData')
-            ->from(VkUsers::class, 'vk_users')
-            ->leftJoin(Cities::class, 'city', 'with', 'vk_users.city = city.cityId')
-            ->where('vk_users.id = '.$id)
-            ->orderBy('vk_users.id', 'ASC')
-            ->getQuery()
-            ->getResult();
-            $userData = array();
-        if (count($userDataArr) == 1) {
-            $userData = $userDataArr[0];
-        }
+        $userData = $vkUsersService->getUserData($id, $em);
         return $this->render('vk_users/view.html.twig', ['userData'=>$userData]);
     }    
     /**
@@ -209,5 +197,21 @@ class VkUsersController extends AbstractController
             'records_count' => $records_count
 
         ]);
+    }
+
+    /**
+     * @Route("/vk/users/update-user-data", name="app_vk_user_update")
+     */
+    public function update(EntityManagerInterface $em, Request $request, VkUsersService $vkUsersService): Response
+    {
+        $userId = $request->query->get('user_id');
+        $userResponse = $vkUsersService->getApiUserById($userId);
+        $userData = $vkUsersService->extractUserDataFromResponse($userResponse);
+        $vkUsersService->writeUserData($userData);
+
+        die();
+        //$repository = $em->getRepository(VkUsers::class);
+
+        return $this->render('vk_users/view.html.twig', ['userData'=>$userData]);
     }
 }
