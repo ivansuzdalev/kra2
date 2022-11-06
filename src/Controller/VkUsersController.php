@@ -210,8 +210,10 @@ class VkUsersController extends AbstractController
         $userData = $vkUsersService->getUserData($id, $em);
         $userResponse = $vkUsersService->getApiUserById($userData['UserId']);
         $userDataFromResponse = $vkUsersService->extractUserDataFromResponse($userResponse);
-        $vkUsersService->writeUserData($userDataFromResponse);
 
+        if (isset($userDataFromResponse['id'])) {
+            $vkUsersService->writeUserData($userDataFromResponse);
+        }
         return $this->redirectToRoute('app_vk_users_view', ['id'=>$id]);
     }
 }

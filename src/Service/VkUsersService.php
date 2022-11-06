@@ -230,7 +230,8 @@ class VkUsersService
     {
         $entityManager = $this->doctrine->getManager();
         $tokens = $entityManager->getRepository(VkTokens::class)->findBy(array(), array('id' => 'DESC'), 1, 0);
-        $token = 'vk1.a.uI6Y9yLfufmUyOXx65xY4OL3YmE-faJbkpx97FkSnEtvYHy1EkPTY5U5DIRhNUFP6CZ9O9b2lw-5GuPHjQKXESN2eiM0PX__875ni2_PXryPwLbdhhAZsV3_7GSU7TPgjqphNz__TPVICEqyM7YDWb8mLNpG6KDW9Nn2NsizNeGylaZqfEg1rqilh9v6p4N7';
+        $tokens = [];
+        $token = 'vk1.a.lbi6hJODCN_3Ph3f2dyflxPyJTGfTnSEBcPiI2ol4C8D5LtFBYw_YNxb67IyKxGDR7gfsktFQbQWp32BIwBpVjhsnAJ6PYdrRG4Ha5T8Fy2-GroB7VtjE1eXgcTzRwqLEnyxuajF4kU99tOT9i1rphP4l0Xfvi0wG4SSt9MPs-IiT5CGjPeeynGUv1YAtVZo';
         if (count($tokens) > 0) {
             $token = $tokens[0]->getToken();
         }
