@@ -30,7 +30,6 @@ class VkUsersService
 
     public function writeUserData($userData): void
     {
-        var_dump($userData);
         $entityManager = $this->doctrine->getManager();
         $existVkUsers = $entityManager->getRepository(VkUsers::class)->findBy(['userId' => $userData['id']]);
         if (!$existVkUsers) {

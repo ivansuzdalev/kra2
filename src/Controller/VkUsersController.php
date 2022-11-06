@@ -128,6 +128,7 @@ class VkUsersController extends AbstractController
     {
         $id = $request->query->get('id');
         $userData = $vkUsersService->getUserData($id, $em);
+        $userData['id'] = $id;
         return $this->render('vk_users/view.html.twig', ['userData'=>$userData]);
     }    
     /**
@@ -204,14 +205,13 @@ class VkUsersController extends AbstractController
      */
     public function update(EntityManagerInterface $em, Request $request, VkUsersService $vkUsersService): Response
     {
-        $userId = $request->query->get('user_id');
-        $userResponse = $vkUsersService->getApiUserById($userId);
-        $userData = $vkUsersService->extractUserDataFromResponse($userResponse);
-        $vkUsersService->writeUserData($userData);
 
-        die();
-        //$repository = $em->getRepository(VkUsers::class);
+        $id = $request->query->get('id');
+        $userData = $vkUsersService->getUserData($id, $em);
+        $userResponse = $vkUsersService->getApiUserById($userData['UserId']);
+        $userDataFromResponse = $vkUsersService->extractUserDataFromResponse($userResponse);
+        $vkUsersService->writeUserData($userDataFromResponse);
 
-        return $this->render('vk_users/view.html.twig', ['userData'=>$userData]);
+        return $this->redirectToRoute('app_vk_users_view', ['id'=>$id]);
     }
 }
