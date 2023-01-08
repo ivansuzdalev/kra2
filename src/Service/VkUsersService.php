@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Service;
+ini_set('max_execution_time', 600);
 
 use App\Entity\Cities;
 use App\Entity\VkUsers;
@@ -18,6 +19,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class VkUsersService
 {
+
     private HttpClientInterface $client;
     private ManagerRegistry $doctrine;
     private string $apiVersion = '5.131';
@@ -145,7 +147,6 @@ class VkUsersService
         $content = file_get_contents($url);
         //Store in the filesystem.
         $file = realpath(dirname(__FILE__) . '/../../public/photos/') . '/' . $filename;
-        var_dump($file);
         if (!is_file($file)) {
             $fp = fopen(($file), "w");
             fwrite($fp, $content);
@@ -162,12 +163,13 @@ class VkUsersService
     public function getApiUsers(): array
     {
         $returnArr = array();
-        for ($ageStep = 0; $ageStep < 200; $ageStep++) {
+        for ($ageStep = 18; $ageStep < 55; $ageStep++) {
             $data = array(
                 'online' => 1,
-                'has_photo' => 0,
+                //'has_photo' => 0,
                 //'city' => '1938562',
-                'country' => 13,
+                'sex'=> 2,
+                'country' => 1,
                 'age_from' => $ageStep,
                 'age_to' => (1 + $ageStep),
                 'count' => 1000,
@@ -186,7 +188,6 @@ class VkUsersService
             } catch (TransportExceptionInterface $e) {
                 var_dump($e);
             }
-
             $data = $this->getDataFromResponse($response);
             if (!empty($data)) {
                 $returnArr[] = $data;
@@ -230,7 +231,7 @@ class VkUsersService
     {
         $entityManager = $this->doctrine->getManager();
         $tokens = $entityManager->getRepository(VkTokens::class)->findBy(array(), array('id' => 'DESC'), 1, 0);
-        $tokens = [];
+        //$tokens = [];
         $token = 'vk1.a.lbi6hJODCN_3Ph3f2dyflxPyJTGfTnSEBcPiI2ol4C8D5LtFBYw_YNxb67IyKxGDR7gfsktFQbQWp32BIwBpVjhsnAJ6PYdrRG4Ha5T8Fy2-GroB7VtjE1eXgcTzRwqLEnyxuajF4kU99tOT9i1rphP4l0Xfvi0wG4SSt9MPs-IiT5CGjPeeynGUv1YAtVZo';
         if (count($tokens) > 0) {
             $token = $tokens[0]->getToken();
@@ -246,6 +247,8 @@ class VkUsersService
         } catch (TransportExceptionInterface $e) {
             var_dump($e);
         }
+
+
         $parsedData = array();
         try {
             $parsedData = $response->toArray();

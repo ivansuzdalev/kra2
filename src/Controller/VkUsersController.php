@@ -14,6 +14,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Common\Collections\Criteria;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Service\TranslitToCyr;
 
 
 class VkUsersController extends AbstractController
@@ -130,7 +131,74 @@ class VkUsersController extends AbstractController
         $userData = $vkUsersService->getUserData($id, $em);
         $userData['id'] = $id;
         return $this->render('vk_users/view.html.twig', ['userData'=>$userData]);
-    }    
+    }
+
+    /**
+     * @param $request
+     * @return Criteria
+     */
+    public function createFilterCriteria($request): Criteria
+    {
+        $criteria = Criteria::create();
+        $criteria = $this->getAndWhereCriteriaByFilter($criteria, 'userId', $request);
+        $criteria = $this->getAndWhereCriteriaByFilter($criteria, 'firstName', $request);
+        $criteria = $this->getAndWhereCriteriaByFilter($criteria, 'lastName', $request);
+        $criteria = $this->getAndWhereCriteriaByFilter($criteria, 'nickname', $request);
+        $criteria = $this->getAndWhereCriteriaByFilter($criteria, 'maidenName', $request);
+        $criteria = $this->getAndWhereCriteriaByFilter($criteria, 'city', $request);
+        $criteria = $this->getAndWhereCriteriaByFilter($criteria, 'country', $request);
+        $criteria = $this->getAndWhereCriteriaByFilter($criteria, 'mobilePhone', $request);
+        $criteria = $this->getAndWhereCriteriaByFilter($criteria, 'lastSeenFrom', $request, true);
+        $criteria = $this->getAndWhereCriteriaByFilter($criteria, 'lastSeenTo', $request, true);
+        $criteria = $this->getAndWhereCriteriaByFilter($criteria, 'screenName', $request);
+        $criteria = $this->getAndWhereCriteriaByFilter($criteria, 'online', $request);
+        $criteria = $this->getAndWhereCriteriaByFilter($criteria, 'skype', $request);
+        return $this->getAndWhereCriteriaByFilter($criteria, 'military', $request);
+    }
+
+    /**
+     * @Route("/vk/users/export-to-csv", name="app_vk_users_export_to_csv")
+     */
+    public function exportDataToCsv(EntityManagerInterface $em, Request $request)
+    {
+
+        $repository = $em->getRepository(VkUsers::class);
+        $criteria = $this->createFilterCriteria($request);
+        $articles = $repository->matching($criteria);
+        $transliterate = new TranslitToCyr();
+        $lists = [];
+        if(count($articles) > 0) {
+            foreach ($articles as $index=>$article) {
+                $record = $article->getRecordData();
+                $row = [];
+                $row['city'] = $record['city']['title'] ?? '';
+                $row['cityCyr'] = isset($record['city']['title']) ? $transliterate->translitToCyr($record['city']['title']) : '';
+                $row['firstName'] = $record['first_name'] ?? '';
+                $row['firstNameCyr'] = isset($record['first_name']) ? $transliterate->translitToCyr($record['first_name']) : '';
+                $row['lastName'] = $record['last_name'] ?? '';
+                $row['lastNameCyr'] = isset($record['last_name']) ? $transliterate->translitToCyr($record['last_name']) : '';
+                $row['bdate'] = $record['bdate'] ?? '';
+                $row['phone'] = $record['mobile_phone'] ?? '';
+                $row['universityName'] = $record['university_name'] ?? '';
+                $row['faculty_name'] = $record['faculty_name'] ?? '';
+                $lists[] = $row;
+            }
+        }
+
+        $fp = fopen('php://temp', 'w');
+        foreach ($lists as $row) {
+            fputcsv($fp, $row);
+        }
+
+        rewind($fp);
+        $response = new Response(stream_get_contents($fp));
+        fclose($fp);
+
+        $response->headers->set('Content-Type', 'text/csv');
+        $response->headers->set('Content-Disposition', 'attachment; filename="testing.csv"');
+
+        return $response;
+    }
     /**
      * @Route("/vk/users/list", name="app_vk_users")
      */
@@ -150,26 +218,7 @@ class VkUsersController extends AbstractController
         }
 
         $nearbyPagesLimit = 7;
-        $criteria = Criteria::create();
-
-        $criteria = $this->getAndWhereCriteriaByFilter($criteria, 'userId', $request);
-        $criteria = $this->getAndWhereCriteriaByFilter($criteria, 'firstName', $request);
-        $criteria = $this->getAndWhereCriteriaByFilter($criteria, 'lastName', $request);
-        $criteria = $this->getAndWhereCriteriaByFilter($criteria, 'nickname', $request);
-        $criteria = $this->getAndWhereCriteriaByFilter($criteria, 'maidenName', $request);
-        $criteria = $this->getAndWhereCriteriaByFilter($criteria, 'city', $request);
-        $criteria = $this->getAndWhereCriteriaByFilter($criteria, 'country', $request);
-        $criteria = $this->getAndWhereCriteriaByFilter($criteria, 'mobilePhone', $request);
-
-        $criteria = $this->getAndWhereCriteriaByFilter($criteria, 'lastSeenFrom', $request, true);
-        $criteria = $this->getAndWhereCriteriaByFilter($criteria, 'lastSeenTo', $request, true);
-
-        $criteria = $this->getAndWhereCriteriaByFilter($criteria, 'screenName', $request);
-        $criteria = $this->getAndWhereCriteriaByFilter($criteria, 'online', $request);
-        $criteria = $this->getAndWhereCriteriaByFilter($criteria, 'skype', $request);
-        $criteria = $this->getAndWhereCriteriaByFilter($criteria, 'military', $request);
-
-
+        $criteria = $this->createFilterCriteria($request);
         $all = $repository->matching($criteria);
         $records_count = count($all);
         $nbPages = round($records_count / $countInPage);

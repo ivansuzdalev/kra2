@@ -275,7 +275,9 @@
             </form>
         </div>
     </div>
-    
+    <div>
+        <a class="export-link" href="{{ path('app_vk_users_export_to_csv', params) }}">Export all data</a>
+    </div>
     <div>
         <div>
             <ul class="pagination">
@@ -283,7 +285,6 @@
                 {% if currentPage != 1 %}
 
                 <li class="page-item">
-                    {% set params = params|merge({'page': 1}) %}
                     <a class="page-link" href="{{ path('app_vk_users', params) }}">First</a>
                 </li>
                 {% endif %}
